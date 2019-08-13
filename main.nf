@@ -40,6 +40,15 @@ Channel.from( 1..minimumN_value_integer )
 
 minimumN_value_range_channel_to_check.view()
 
+
+vcf_and_idx_channel = vcf_for_create_union_vcf.combine(idx_vcf_for_create_union_vcf)
+minN_vcf_idx_combined_channel = minimumN_value_range_channel.combine(vcf_and_idx_channel)
+
+minN_vcf_idx_combined_channel.into{minN_vcf_idx_combined_channel_to_use ; minN_vcf_idx_combined_channel_to_inspect}
+
+
+minN_vcf_idx_combined_channel_to_inspect.view()
+
 process create_union_vcf {
 
     tag "max minimumN = $params.minimumN_value"
@@ -48,28 +57,26 @@ process create_union_vcf {
     echo true
 
     input:
-    each file(vcf) from vcf_for_create_union_vcf
-    each file(idx_vcf) from idx_vcf_for_create_union_vcf
+    set val(minN_value), file(all_vcfs_and_idxs) from minN_vcf_idx_combined_channel_to_use
     each file(fasta) from fasta_for_create_union_vcf
     each file(fai) from fai_for_create_union_vcf
     each file(dict) from dict_for_create_union_vcf
-    val(minN_value) from minimumN_value_range_channel
 
     output:
     file("unionVCF_SNPpresent_in_at_least*") into union_vcf_channel
 
     shell:
-    println(minN_value)
+
     '''
     minN_value=$(echo !{minN_value})
     echo -n "java -jar /usr/GenomeAnalysisTK.jar -T CombineVariants -R !{fasta} --minimumN ${minN_value} " > combine_variants.sh
     for vcf in $(ls *.vcf); do
     echo -n "--variant:$(basename $vcf | cut -d. -f1) $vcf  " >> combine_variants.sh
     done
-    echo -n "-o unionVCF_SNPpresent_in_at_least_${minN_value}.vcf"  >> combine_variants.sh
+    echo -n "-o 'unionVCF_SNPpresent_in_at_least_${minN_value}.vcf' "  >> combine_variants.sh
     chmod ugo+xr combine_variants.sh
     bash combine_variants.sh &> log_minN_${minN_value}.txt
-    chmod -R ugo+xrw unionVCF_SNPpresent_in_at_least_${minN_value}.vcf
+    chmod -R ugo+xrw "unionVCF_SNPpresent_in_at_least_${minN_value}.vcf"
     '''
 }
 
