@@ -1,8 +1,7 @@
-// minimumN_value
+// minimumN_value; Request in script with params.minimumN_value since no channel will be made
 if (!params.minimumN_value){
     exit 1, "--minimumN_value not found, please specify an integer from 1 to N of vcf files you provide in --inputdir: ${params.inputdir}" 
 }
-
 
 // inputdir: retrieve vcf
 Channel.fromPath("${params.inputdir}/*.vcf")
