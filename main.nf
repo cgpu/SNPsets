@@ -29,14 +29,11 @@ Channel.fromPath(params.dict)
        .ifEmpty { exit 1, "dict annotation file not found: ${params.dict}" }
        .set { dict_for_create_union_vcf }
 
-// dict
-Channel.from(1..params.dict)
-       .ifEmpty { exit 1, "dict annotation file not found: ${params.dict}" }
-       .set { dict_for_create_union_vcf }
-
 // range of values of minimumN_value
 // Java Collection; collection entries will be emitted as individual values
-def minimumN_value_integer = Integer.parseInt(params.minimumN_value)
+def minimumN_value_integer = (params.minimumN_value).toInteger()
+minimumN_value_integer.getClass()
+println(minimumN_value_integer)
 
 Channel.from( 1..minimumN_value_integer )
        .set { minimumN_value_range_channel }
