@@ -51,6 +51,7 @@ process create_union_vcf {
     file(fasta) from fasta_for_create_union_vcf
     file(fai) from fai_for_create_union_vcf
     file(dict) from dict_for_create_union_vcf
+    val(minimumN_value) from minimumN_value_range_channel
 
     output:
     file("unionVCF_SNPpresent_in_at_least_!{params.minimumN_value}.vcf") into union_vcf_channel
@@ -61,7 +62,7 @@ process create_union_vcf {
     for vcf in $(ls *.vcf); do
     echo -n "--variant:$(basename $vcf | cut -d. -f1) $vcf  " >> combine_variants.sh
     done
-    echo -n "-o unionVCF_SNPpresent_in_at_least_.vcf"  >> combine_variants.sh
+    echo -n "-o unionVCF_SNPpresent_in_at_least_!{params.minimumN_value}.vcf"  >> combine_variants.sh
     chmod ugo+xr combine_variants.sh
     bash combine_variants.sh
     chmod -R ugo+xrw unionVCF_SNPpresent_in_at_least_!{params.minimumN_value}.vcf
