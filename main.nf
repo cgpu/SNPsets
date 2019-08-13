@@ -29,9 +29,19 @@ Channel.fromPath(params.dict)
        .ifEmpty { exit 1, "dict annotation file not found: ${params.dict}" }
        .set { dict_for_create_union_vcf }
 
+// dict
+Channel.from(1..params.dict)
+       .ifEmpty { exit 1, "dict annotation file not found: ${params.dict}" }
+       .set { dict_for_create_union_vcf }
+
+// range of values of minimumN_value
+// Java Collection; collection entries will be emitted as individual values
+Channel.from( 1..params.minimumN_value )
+       .set { minimumN_value_range_channel }
+
 process create_union_vcf {
 
-    tag "minimumN = $params.minimumN_value"
+    tag "max minimumN = $params.minimumN_value"
     container "broadinstitute/gatk3:3.8-1"
     publishDir "${params.outdir}/SNPsets", mode: 'copy'
 
