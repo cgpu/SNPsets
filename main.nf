@@ -49,7 +49,7 @@ process create_union_vcf {
     '''
     echo -n "java -jar /usr/GenomeAnalysisTK.jar -T CombineVariants -R !{fasta}  -o unionVCF_SNPpresent_in_at_least_.vcf --minimumN !{params.minimumN_value} " > combine_variants.sh
     for vcf in $(ls *.vcf); do
-    echo -n "--variant:$(basename $vcf) $vcf " >> combine_variants.sh
+    echo -n "--variant:$(basename $vcf | cut -d. -f1) $vcf \\ \n " >> combine_variants.sh
     done
     chmod ugo+xr combine_variants.sh
     cat combine_variants.sh
