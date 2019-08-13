@@ -36,8 +36,8 @@ process create_union_vcf {
     container "broadinstitute/gatk3:3.8-1"
 
     input:
-    file(vcf) from vcf_for_create_union_vcf
-    file(idx_vcf) from idx_vcf_for_create_union_vcf
+    file(vcf) from vcf_for_create_union_vcf.collect()
+    file(idx_vcf) from idx_vcf_for_create_union_vcf.collect()
     file(fasta) from fasta_for_create_union_vcf
     file(fai) from fai_for_create_union_vcf
     file(dict) from dict_for_create_union_vcf
@@ -49,12 +49,12 @@ process create_union_vcf {
     '''
     minimumN_value=$(echo !{minimumN_value})
 
-    echo -n "java -jar /usr/GenomeAnalysisTK.jar -T CombineVariants -R !{fasta}  -o unionVCF_SNPpresent_in_at_least_$minimumN_value.vcf -minimumN ${minimumN_value}" > combine_variants.sh
+    echo -n "java -jar /usr/GenomeAnalysisTK.jar -T CombineVariants -R !{fasta}  -o unionVCF_SNPpresent_in_at_least_$minimumN_value.vcf --minimumN ${minimumN_value} " > combine_variants.sh
     for vcf in $(ls *.vcf); do
     echo -n "--variant:$(basename $vcf) $vcf " >> combine_variants.sh
     done
     chmod ugo+xr combine_variants.sh
-    bash combine_variants.sh
+    cat combine_variants.sh
     chmod -R ugo+xrw unionVCF_SNPpresent_in_at_least_${minimumN_value}.vcf
     '''
 }
