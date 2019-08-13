@@ -3,6 +3,7 @@ if (!params.minimumN_value){
     exit 1, "--minimumN_value not found, please specify an integer from 1 to N of vcf files you provide in --inputdir: ${params.inputdir}" 
 }
 
+
 // inputdir: retrieve vcf
 Channel.fromPath("${params.inputdir}/*.vcf")
         .ifEmpty { exit 1, "--inputdir  not found or is missing required .vcf files: ${params.inputdir}" }
@@ -29,7 +30,6 @@ Channel.fromPath(params.dict)
        .ifEmpty { exit 1, "dict annotation file not found: ${params.dict}" }
        .set { dict_for_create_union_vcf }
 
-
 process create_union_vcf {
 
     tag "$minimumN_value"
@@ -48,7 +48,7 @@ process create_union_vcf {
 
     shell:
     '''
-    echo -n "java -jar /usr/GenomeAnalysisTK.jar -T CombineVariants -R !{fasta}  -o unionVCF_SNPpresent_in_at_least_.vcf --minimumN 2 " > combine_variants.sh
+    echo -n "java -jar /usr/GenomeAnalysisTK.jar -T CombineVariants -R !{fasta}  -o unionVCF_SNPpresent_in_at_least_.vcf --minimumN !{params.minimumN_value} " > combine_variants.sh
     for vcf in $(ls *.vcf); do
     echo -n "--variant:$(basename $vcf) $vcf " >> combine_variants.sh
     done
