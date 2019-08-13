@@ -31,7 +31,7 @@ Channel.fromPath(params.dict)
 
 process create_union_vcf {
 
-    tag "$params.minimumN_value"
+    tag "minimumN = $params.minimumN_value"
     container "broadinstitute/gatk3:3.8-1"
     echo true
 
