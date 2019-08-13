@@ -32,8 +32,9 @@ Channel.fromPath(params.dict)
 
 process create_union_vcf {
 
-    tag "vcf"
+    tag "$minimumN_value"
     container "broadinstitute/gatk3:3.8-1"
+    echo true
 
     input:
     file(vcf) from vcf_for_create_union_vcf.collect()
@@ -47,15 +48,13 @@ process create_union_vcf {
 
     shell:
     '''
-    minimumN_value=$(echo !{minimumN_value})
-
-    echo -n "java -jar /usr/GenomeAnalysisTK.jar -T CombineVariants -R !{fasta}  -o unionVCF_SNPpresent_in_at_least_$minimumN_value.vcf --minimumN ${minimumN_value} " > combine_variants.sh
+    echo -n "java -jar /usr/GenomeAnalysisTK.jar -T CombineVariants -R !{fasta}  -o unionVCF_SNPpresent_in_at_least_.vcf --minimumN !{minimumN_value} " > combine_variants.sh
     for vcf in $(ls *.vcf); do
     echo -n "--variant:$(basename $vcf) $vcf " >> combine_variants.sh
     done
     chmod ugo+xr combine_variants.sh
     cat combine_variants.sh
-    chmod -R ugo+xrw unionVCF_SNPpresent_in_at_least_${minimumN_value}.vcf
+    chmod -R ugo+xrw unionVCF_SNPpresent_in_at_least_.vcf
     '''
 }
 
