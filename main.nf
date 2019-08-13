@@ -36,7 +36,7 @@ Channel.from(1..params.dict)
 
 // range of values of minimumN_value
 // Java Collection; collection entries will be emitted as individual values
-Channel.from( 1..params.minimumN_value.toInteger() )
+Channel.from( [1..params.minimumN_value.toInteger()] )
        .set { minimumN_value_range_channel }
 
 process create_union_vcf {
