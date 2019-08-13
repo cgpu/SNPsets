@@ -43,7 +43,7 @@ process create_union_vcf {
     file(dict) from dict_for_create_union_vcf
 
     output:
-    file("unionVCF_SNPpresent_in_at_least_.vcf") into union_vcf_channel
+    file("unionVCF_SNPpresent_in_at_least_!{params.minimumN_value}.vcf") into union_vcf_channel
 
     shell:
     '''
@@ -54,7 +54,7 @@ process create_union_vcf {
     echo -n "-o unionVCF_SNPpresent_in_at_least_.vcf"  >> combine_variants.sh
     chmod ugo+xr combine_variants.sh
     bash combine_variants.sh
-    chmod -R ugo+xrw unionVCF_SNPpresent_in_at_least_.vcf
+    chmod -R ugo+xrw unionVCF_SNPpresent_in_at_least_!{params.minimumN_value}.vcf
     '''
 }
 
