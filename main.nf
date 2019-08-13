@@ -34,7 +34,6 @@ Channel.fromPath(params.dict)
 def minimumN_value_integer = (params.minimumN_value).toInteger()
 
 Channel.from( 1..minimumN_value_integer )
-       .toList()
        .into { minimumN_value_range_channel ; minimumN_value_range_channel_to_check}
 
 minimumN_value_range_channel_to_check.view()
