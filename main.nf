@@ -32,8 +32,6 @@ Channel.fromPath(params.dict)
 // range of values of minimumN_value
 // Java Collection; collection entries will be emitted as individual values
 def minimumN_value_integer = (params.minimumN_value).toInteger()
-minimumN_value_integer.getClass()
-println(minimumN_value_integer)
 
 Channel.from( 1..minimumN_value_integer )
        .set { minimumN_value_range_channel }
@@ -50,14 +48,14 @@ process create_union_vcf {
     file(fasta) from fasta_for_create_union_vcf
     file(fai) from fai_for_create_union_vcf
     file(dict) from dict_for_create_union_vcf
-    val(minimumN_value) from minimumN_value_range_channel
+    val(minN_value) from minimumN_value_range_channel
 
     output:
     file("unionVCF_SNPpresent_in_at_least_!{params.minimumN_value}.vcf") into union_vcf_channel
 
     shell:
     '''
-    echo -n "java -jar /usr/GenomeAnalysisTK.jar -T CombineVariants -R !{fasta} --minimumN !{params.minimumN_value} " > combine_variants.sh
+    echo -n "java -jar /usr/GenomeAnalysisTK.jar -T CombineVariants -R !{fasta} --minimumN !{minN_value} " > combine_variants.sh
     for vcf in $(ls *.vcf); do
     echo -n "--variant:$(basename $vcf | cut -d. -f1) $vcf  " >> combine_variants.sh
     done
