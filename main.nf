@@ -38,7 +38,7 @@ def minimumN_value_integer = (params.minimumN_value).toInteger()
 Channel.from( 1..minimumN_value_integer )
        .into { minimumN_value_range_channel ; minimumN_value_range_channel_to_check}
 
-minimumN_value_range_channel_to_check.view()
+minimumN_value_range_channel_to_check
 
 
 vcf_and_idx_channel = vcf_for_create_union_vcf.combine(idx_vcf_for_create_union_vcf)
@@ -46,8 +46,7 @@ minN_vcf_idx_combined_channel = minimumN_value_range_channel.combine(vcf_and_idx
 
 minN_vcf_idx_combined_channel.into{minN_vcf_idx_combined_channel_to_use ; minN_vcf_idx_combined_channel_to_inspect}
 
-
-minN_vcf_idx_combined_channel_to_inspect.view()
+minN_vcf_idx_combined_channel_to_inspect.map{ it ->  tuple(it[0], it[1..-1])  }.view()
 
 process create_union_vcf {
 
@@ -57,7 +56,7 @@ process create_union_vcf {
     echo true
 
     input:
-    set val(minN_value), file(all_vcfs_and_idxs) from minN_vcf_idx_combined_channel_to_use
+    set val(minN_value), file(all_the_vcfs) from minN_vcf_idx_combined_channel_to_use
     each file(fasta) from fasta_for_create_union_vcf
     each file(fai) from fai_for_create_union_vcf
     each file(dict) from dict_for_create_union_vcf
