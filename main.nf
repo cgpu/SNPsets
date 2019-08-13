@@ -1,4 +1,4 @@
-// TODO: Migrate this to nextflow config
+// minimumN_value
 if (!params.minimumN_value){
     exit 1, "--minimumN_value not found, please specify an integer from 1 to N of vcf files you provide in --inputdir: ${params.inputdir}" 
 }
@@ -43,18 +43,19 @@ process create_union_vcf {
     file(dict) from dict_for_create_union_vcf
 
     output:
-    file("unionVCF_SNPpresent_in_at_least_!{minimumN_value}.vcf") into union_vcf_channel
+    file("unionVCF_SNPpresent_in_at_least_}.vcf") into union_vcf_channel
 
     shell:
     '''
-    echo -n "java -jar /usr/GenomeAnalysisTK.jar -T CombineVariants -R !{fasta}  -o unionVCF_SNPpresent_in_at_least_!{minimumN_value}.vcf -minimumN !{minimumN_value}" > 
+    minimumN_value=!{minimumN_value}
+
+    echo -n "java -jar /usr/GenomeAnalysisTK.jar -T CombineVariants -R !{fasta}  -o unionVCF_SNPpresent_in_at_least_$minimumN_value.vcf -minimumN ${minimumN_value}" > 
     for vcf in $(ls *.vcf); do
     echo -n "--variant:$(basename $vcf) $vcf " >> combine_variants.sh
     done
-    echo -n "-L !{intervals}" --merge-input-intervals --java-options '-DGATK_STACKTRACE_ON_USER_EXCEPTION=true' >> create_GenomicsDB.sh
     chmod ugo+xr combine_variants.sh
     bash combine_variants.sh
-    chmod -R ugo+xrw unionVCF_SNPpresent_in_at_least_!{minimumN_value}.vcf
+    chmod -R ugo+xrw unionVCF_SNPpresent_in_at_least_${minimumN_value}.vcf
     '''
 }
 
