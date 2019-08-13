@@ -45,6 +45,7 @@ process create_union_vcf {
     tag "max minimumN = $params.minimumN_value"
     container "broadinstitute/gatk3:3.8-1"
     publishDir "${params.outdir}/SNPsets", mode: 'copy'
+    echo true
 
     input:
     each file(vcf) from vcf_for_create_union_vcf
@@ -58,6 +59,7 @@ process create_union_vcf {
     file("unionVCF_SNPpresent_in_at_least*") into union_vcf_channel
 
     shell:
+    println(minN_value)
     '''
     minN_value=$(echo !{minN_value})
     echo -n "java -jar /usr/GenomeAnalysisTK.jar -T CombineVariants -R !{fasta} --minimumN ${minN_value} " > combine_variants.sh
