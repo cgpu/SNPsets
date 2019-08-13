@@ -44,11 +44,11 @@ process create_union_vcf {
     file(dict) from dict_for_create_union_vcf
 
     output:
-    file("unionVCF_SNPpresent_in_at_least_}.vcf") into union_vcf_channel
+    file("unionVCF_SNPpresent_in_at_least_.vcf") into union_vcf_channel
 
     shell:
     '''
-    echo -n "java -jar /usr/GenomeAnalysisTK.jar -T CombineVariants -R !{fasta}  -o unionVCF_SNPpresent_in_at_least_.vcf --minimumN !{minimumN_value} " > combine_variants.sh
+    echo -n "java -jar /usr/GenomeAnalysisTK.jar -T CombineVariants -R !{fasta}  -o unionVCF_SNPpresent_in_at_least_.vcf --minimumN 2 " > combine_variants.sh
     for vcf in $(ls *.vcf); do
     echo -n "--variant:$(basename $vcf) $vcf " >> combine_variants.sh
     done
