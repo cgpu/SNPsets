@@ -5,12 +5,12 @@ if (!params.minimumN_value){
 
 // inputdir: retrieve vcf
 Channel.fromPath("${params.inputdir}/*.vcf")
-        .ifEmpty { exit 1, "--inputdir  not found or is missing required .vcf files: ${params.inputdir}" }
+        .ifEmpty { exit 1, "--inputdir  not found or is missing required .vcf files" }
         .set { vcf_for_create_union_vcf  }
 
 // inputdir: retrieve idx
 Channel.fromPath("${params.inputdir}/*.idx")
-        .ifEmpty { exit 1, "--inputdir not found or is missing required .vcf.idx files: ${params.inputdir}" }
+        .ifEmpty { exit 1, "--inputdir not found or is missing required .idx files" }
         .set { idx_vcf_for_create_union_vcf  }
 
 // fasta
