@@ -34,7 +34,10 @@ Channel.fromPath(params.dict)
 def minimumN_value_integer = (params.minimumN_value).toInteger()
 
 Channel.from( 1..minimumN_value_integer )
-       .set { minimumN_value_range_channel }
+       .toList()
+       .into { minimumN_value_range_channel ; minimumN_value_range_channel_to_check}
+
+minimumN_value_range_channel_to_check.view()
 
 process create_union_vcf {
 
@@ -51,7 +54,7 @@ process create_union_vcf {
     val(minN_value) from minimumN_value_range_channel
 
     output:
-    file("unionVCF_SNPpresent_in_at_least_!{params.minimumN_value}.vcf") into union_vcf_channel
+    file("unionVCF_SNPpresent_in_at_least_!{minN_value}.vcf") into union_vcf_channel
 
     shell:
     '''
@@ -59,10 +62,10 @@ process create_union_vcf {
     for vcf in $(ls *.vcf); do
     echo -n "--variant:$(basename $vcf | cut -d. -f1) $vcf  " >> combine_variants.sh
     done
-    echo -n "-o unionVCF_SNPpresent_in_at_least_!{params.minimumN_value}.vcf"  >> combine_variants.sh
+    echo -n "-o unionVCF_SNPpresent_in_at_least_!{minN_value}.vcf"  >> combine_variants.sh
     chmod ugo+xr combine_variants.sh
-    bash combine_variants.sh
-    chmod -R ugo+xrw unionVCF_SNPpresent_in_at_least_!{params.minimumN_value}.vcf
+    bash combine_variants.sh &> log_minN_!{minN_value}.txt
+    chmod -R ugo+xrw unionVCF_SNPpresent_in_at_least_!{minN_value}.vcf
     '''
 }
 
