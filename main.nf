@@ -65,10 +65,9 @@ process create_union_vcf {
     file("unionVCF_SNPpresent_in_at_least*") into union_vcf_channel
 
     shell:
-
     '''
     minN_value=$(echo !{minN_value})
-    echo -n "java -jar /usr/GenomeAnalysisTK.jar -T CombineVariants -R !{fasta} --minimumN ${minN_value} -genotypeMergeOptions UNIQUIFY" > combine_variants.sh
+    echo -n "java -jar /usr/GenomeAnalysisTK.jar -T CombineVariants -R !{fasta} --minimumN ${minN_value} -genotypeMergeOptions UNIQUIFY " > combine_variants.sh
     for vcf in $(ls *.vcf); do
     echo -n "--variant:$(basename $vcf | cut -d. -f1) $vcf  " >> combine_variants.sh
     done
