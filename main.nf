@@ -33,7 +33,7 @@ process create_union_vcf {
 
     tag "minimumN = $params.minimumN_value"
     container "broadinstitute/gatk3:3.8-1"
-    echo true
+    publishDir "${params.outdir}/SNPsets", mode: 'copy'
 
     input:
     file(vcf) from vcf_for_create_union_vcf.collect()
@@ -53,7 +53,6 @@ process create_union_vcf {
     done
     echo -n "-o unionVCF_SNPpresent_in_at_least_.vcf"  >> combine_variants.sh
     chmod ugo+xr combine_variants.sh
-    cat combine_variants.sh
     bash combine_variants.sh
     chmod -R ugo+xrw unionVCF_SNPpresent_in_at_least_.vcf
     '''
